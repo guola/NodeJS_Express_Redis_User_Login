@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>
+        医生管理
+        </title>
+        <link rel="stylesheet" href="/stylesheets/jquery.mobile-1.1.1.min.css" />
+        <style>
+            /* App custom styles */
+        </style>
+        <script src="/javascripts/jquery.min.js">
+        </script>
+        <script src="/javascripts/jquery.mobile-1.1.1.min.js">
+        </script>
+        <script>
+
+
+         $('#doctorsPage').live( 'pageshow',function(event, ui){
+            $.get('/doctors', function(data)
+            {
+               $('#doctorslist li').remove();
+               $.each(data,function(index, item){
+                   $li=$('<li/>');
+                   $a= $('<a/>');
+                   $a.attr({
+                   "herf":"#",
+                   "data-id":item.id,
+                   "data-password":item.password
+                   }).html(item.username);
+
+                   $li.append($a);
+                   $('#doctorslist').append($li);
+               });//end each
+            $('#doctorslist').listview('refresh');
+            }); //end get
+         });
+
+          $('#PageReg-username').live('blur',
+         function()
+         {
+         	$.post('/doctors/isexist',{username:$('#PageReg-username').val()},function(data){
+         		if(data.ret)
+         		{
+         			$('#PageReg-username-state').text(data.msg);
+         		}
+         		else{
+         			$('#PageReg-username-state').text(data.msg);
+         		}
+
+         	},'json');
+
+         }
+         );//end PageReg-username
+
+         function doctorReg()
+         {
+         	$.mobile.showPageLoadingMsg();
+
+         	$.post('/doctors',{username:$('#PageReg-username').val(),email:$('#PageReg-email').val(),password:$('#PageReg-password').val()},function(data){
+         		if(data.ret)
+         		{
+         			alert(data.msg);
+         			$.mobile.changePage('/tags', { transition: "slideup"} );
+         		}
+         		else{
+         			alert(data.msg);
+         		}
+
+         	},'json');
+
+         }
+
+         function doctorLogin(){
+
+         	$.post('/doctors/login',{username:$('#PageLogin-username').val(),password:$('#PageLogin-password').val()},function(data){
+         		if(data.ret)
+         		{
+         			alert(data.msg);
+         			$.mobile.changePage('/tags', { transition: "slideup"} );
+         		}
+         		else{
+         			alert(data.msg);
+         		}
+         	},'json');
+         }
+
+        </script>
+    </head>
+    <body>
+        <!-- Home -->
+<! ----------------------------------------------------------------------------------------------------------------- !>
+        <div data-role="page" id="doctorsPage">
+            <div data-theme="a" data-role="header">
+                <h3>
+                    医生列表
+                </h3>
+            </div>
+            <div data-role="content">
+            <ul data-role="listview" data-inset="true"  id="doctorslist">
+            </ul>
+
+            <a href="#PageReg"   data-role="button" data-theme="a">医生注册</a>
+            <a href="#PageLogin" data-role="button" data-theme="a">医生登陆</a>
+
+            </div>
+        </div>
+
+
+
+<! ----------------------------------------------------------------------------------------------------------------- !>
+        <div data-role="page"  data-back-btn-text="返回" data-add-back-btn="true" id="PageReg">
+            <div data-theme="a" data-role="header">
+                <h3>
+                    注册
+                </h3>
+            </div>
+            <div data-role="content">
+                <div data-role="fieldcontain">
+                    <fieldset data-role="controlgroup">
+                        <label for="textinput1">
+                            医生昵称
+                        </label>
+                        <input name="PageReg-name" id="PageReg-username" placeholder="" value="d00" type="text">
+                        <span id="PageReg-username-state"></span>
+                    </fieldset>
+                </div>
+                <div data-role="fieldcontain">
+                    <fieldset data-role="controlgroup">
+                        <label for="textinput2">
+                            电子邮件
+                        </label>
+                        <input name="PageReg-email" id="PageReg-email" placeholder="" value="d00@doctor.com" type="email">
+                    </fieldset>
+                </div>
+                <div data-role="fieldcontain">
+                    <fieldset data-role="controlgroup">
+                        <label for="textinput3">
+                            输入密码
+                        </label>
+                        <input name="PageReg-password" id="PageReg-password" placeholder="" value="123" type="password">
+                    </fieldset>
+                </div>
+                <a href="＃" data-role="button" onclick="doctorReg()">确定</a>
+            </div>
+        </div>
+
+<! ---------------------------------------------------PageLogin-------------------------------------------------------------- !>
+        <div data-role="page" id="PageLogin">
+            <div data-theme="a" data-role="header">
+                <h3>
+                 医生登陆
+                </h3>
+            </div>
+
+            <div data-role="content">
+                <div data-role="fieldcontain">
+                    <input   name= "Page-info-id "   type='hidden'   value='' />
+                    <fieldset data-role="controlgroup">
+                        <label for="textinput1">
+                            医生昵称
+                        </label>
+                        <input name="PageLogin-username" id="PageLogin-username" placeholder="" value="D00" type="text">
+                    </fieldset>
+                </div>
+                <div data-role="fieldcontain">
+                    <fieldset data-role="controlgroup">
+                        <label for="textinput3">
+                            输入密码
+                        </label>
+                        <input name="PageLogin-password" id="PageLogin-password" placeholder="" value="123" type="password">
+                    </fieldset>
+                </div>
+                <a href="＃" data-role="button" onclick="doctorLogin()">确定</a>
+            </div>
+        </div>
+                <script>
+                </script>
+    </body>
+</html>
